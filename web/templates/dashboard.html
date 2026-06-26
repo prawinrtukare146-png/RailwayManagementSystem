@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Railway Dashboard</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            background:#f4f6f9;
+        }
+
+        header{
+            background:#0d6efd;
+            color:white;
+            padding:20px;
+            text-align:center;
+            font-size:28px;
+        }
+
+        .container{
+            width:90%;
+            margin:30px auto;
+        }
+
+        .cards{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            gap:20px;
+        }
+
+        .card{
+            background:white;
+            border-radius:10px;
+            padding:25px;
+            text-align:center;
+            box-shadow:0 5px 10px rgba(0,0,0,.15);
+        }
+
+        .card h2{
+            color:#555;
+            margin-bottom:10px;
+        }
+
+        .number{
+            font-size:40px;
+            color:#0d6efd;
+            font-weight:bold;
+        }
+
+        .menu{
+            display:flex;
+            justify-content:center;
+            gap:15px;
+            margin-top:40px;
+            flex-wrap:wrap;
+        }
+
+        .menu a{
+            text-decoration:none;
+            background:#0d6efd;
+            color:white;
+            padding:12px 22px;
+            border-radius:6px;
+        }
+
+        .menu a:hover{
+            background:#084db4;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+🚆 Railway Management Dashboard
+</header>
+
+<div class="container">
+
+<div class="cards">
+
+<div class="card">
+<h2>Total Trains</h2>
+<div class="number">{{TRAINS}}</div>
+</div>
+
+<div class="card">
+<h2>Total Bookings</h2>
+<div class="number">{{BOOKINGS}}</div>
+</div>
+
+<div class="card">
+<h2>Cancelled</h2>
+<div class="number">{{CANCELLED}}</div>
+</div>
+
+<div class="card">
+<h2>Passengers</h2>
+<div class="number">{{PASSENGERS}}</div>
+</div>
+
+</div>
+
+<div class="menu">
+
+<a href="/">🏠 Home</a>
+
+<a href="/book.html">🎫 Book Ticket</a>
+
+<a href="/cancel.html">❌ Cancel Ticket</a>
+
+<a href="/trains">🚆 Trains</a>
+
+<a href="/bookings">📋 Bookings</a>
+
+<a href="/location">📍 Location</a>
+
+</div>
+
+</div>
+
+</body>
+</html>
