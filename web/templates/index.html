@@ -3,23 +3,1107 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Railway Management System</title>
-    <link rel="stylesheet" href="style.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+
+            background: linear-gradient(
+                -45deg,
+                #07111f,
+                #102b46,
+                #123e50,
+                #251449,
+                #07111f
+            );
+
+            background-size: 400% 400%;
+            animation: backgroundMove 15s ease infinite;
+        }
+
+        /* Animated background */
+
+        @keyframes backgroundMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Moving glowing background lights */
+
+        .glow {
+            position: fixed;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: -1;
+            animation: floatGlow 10s ease-in-out infinite alternate;
+        }
+
+        .glow-one {
+            background: #00d9ff;
+            top: 10%;
+            left: -100px;
+        }
+
+        .glow-two {
+            background: #9d4edd;
+            right: -100px;
+            bottom: 5%;
+            animation-delay: 2s;
+        }
+
+        @keyframes floatGlow {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+
+            to {
+                transform: translate(80px, -60px) scale(1.3);
+            }
+        }
+
+        /* Navigation bar */
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+
+            padding: 18px 7%;
+
+            background: rgba(5, 15, 30, 0.8);
+            backdrop-filter: blur(18px);
+
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+
+            animation: slideDown 0.8s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            color: white;
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+        .logo-icon {
+            font-size: 35px;
+            animation: trainBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes trainBounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-links a {
+            color: #d8e8ff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+
+            padding: 11px 14px;
+            border-radius: 10px;
+
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: white;
+            background: rgba(0, 217, 255, 0.15);
+            box-shadow: 0 0 18px rgba(0, 217, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Hero section */
+
+        .hero {
+            min-height: 580px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 50px;
+            padding: 85px 8% 60px;
+
+            flex-wrap: wrap;
+        }
+
+        .hero-content {
+            flex: 1 1 400px;
+            animation: fadeLeft 1.1s ease both;
+        }
+
+        @keyframes fadeLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-60px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .badge {
+            display: inline-block;
+
+            padding: 10px 17px;
+            margin-bottom: 25px;
+
+            border: 1px solid rgba(0, 217, 255, 0.4);
+            border-radius: 30px;
+
+            background: rgba(0, 217, 255, 0.1);
+
+            color: #72edff;
+            font-size: 13px;
+            font-weight: bold;
+
+            animation: pulseBadge 2.5s infinite;
+        }
+
+        @keyframes pulseBadge {
+            0%, 100% {
+                box-shadow: 0 0 0 rgba(0, 217, 255, 0);
+            }
+
+            50% {
+                box-shadow: 0 0 25px rgba(0, 217, 255, 0.2);
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(38px, 5vw, 68px);
+            line-height: 1.12;
+            font-weight: 900;
+            margin-bottom: 25px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(
+                90deg,
+                #00e5ff,
+                #8be9fd,
+                #c77dff,
+                #00e5ff
+            );
+
+            background-size: 250% auto;
+
+            color: transparent;
+            background-clip: text;
+            -webkit-background-clip: text;
+
+            animation: textShine 5s linear infinite;
+        }
+
+        @keyframes textShine {
+            to {
+                background-position: 250% center;
+            }
+        }
+
+        .hero p {
+            max-width: 560px;
+            color: #c0d0e5;
+            font-size: 17px;
+            line-height: 1.9;
+            margin-bottom: 30px;
+        }
+
+        /* Buttons */
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+
+            padding: 15px 24px;
+            border-radius: 12px;
+
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 15px;
+
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-primary {
+            color: #07111f;
+
+            background: linear-gradient(
+                100deg,
+                #00e5ff,
+                #79f5ff
+            );
+
+            box-shadow: 0 8px 28px rgba(0, 217, 255, 0.3);
+        }
+
+        .btn-secondary {
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .btn:hover {
+            transform: translateY(-5px) scale(1.03);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 12px 40px rgba(0, 217, 255, 0.5);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.14);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.08);
+        }
+
+        /* Animated train illustration */
+
+        .train-scene {
+            position: relative;
+
+            flex: 1 1 350px;
+            min-height: 350px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            animation: fadeRight 1.2s ease both;
+        }
+
+        @keyframes fadeRight {
+            from {
+                opacity: 0;
+                transform: translateX(60px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .orbit {
+            position: absolute;
+
+            width: 330px;
+            height: 330px;
+
+            border: 1px solid rgba(0, 217, 255, 0.25);
+            border-radius: 50%;
+
+            animation: orbitSpin 20s linear infinite;
+        }
+
+        .orbit::before,
+        .orbit::after {
+            content: "";
+            position: absolute;
+
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+
+            background: #00e5ff;
+            box-shadow: 0 0 20px #00e5ff;
+        }
+
+        .orbit::before {
+            top: 45px;
+            left: 45px;
+        }
+
+        .orbit::after {
+            bottom: 40px;
+            right: 40px;
+            background: #c77dff;
+            box-shadow: 0 0 20px #c77dff;
+        }
+
+        @keyframes orbitSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .train-card {
+            position: relative;
+            z-index: 2;
+
+            width: min(100%, 350px);
+            padding: 30px;
+
+            text-align: center;
+
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 25px;
+
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(18px);
+
+            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.25);
+
+            animation: trainFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes trainFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        .big-train {
+            font-size: 110px;
+            display: block;
+
+            filter: drop-shadow(0 0 25px rgba(0, 217, 255, 0.3));
+
+            animation: trainRock 3s ease-in-out infinite;
+        }
+
+        @keyframes trainRock {
+            0%, 100% {
+                transform: rotate(-2deg);
+            }
+
+            50% {
+                transform: rotate(2deg);
+            }
+        }
+
+        .train-card h3 {
+            font-size: 23px;
+            margin: 15px 0 10px;
+        }
+
+        .train-card p {
+            color: #b8cee8;
+            line-height: 1.7;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            margin-top: 18px;
+            padding: 9px 15px;
+
+            border-radius: 30px;
+            background: rgba(35, 220, 130, 0.12);
+
+            color: #70ffb0;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #31ef93;
+
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0.25;
+            }
+        }
+
+        /* Moving railway track */
+
+        .track {
+            position: relative;
+            height: 65px;
+            margin-top: -5px;
+
+            overflow: hidden;
+
+            border-top: 2px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+
+            background: rgba(0, 0, 0, 0.12);
+        }
+
+        .track::before,
+        .track::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+
+            height: 4px;
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .track::before {
+            top: 13px;
+        }
+
+        .track::after {
+            bottom: 13px;
+        }
+
+        .sleepers {
+            position: absolute;
+            inset: 0;
+
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0,
+                transparent 30px,
+                rgba(255, 255, 255, 0.3) 30px,
+                rgba(255, 255, 255, 0.3) 37px
+            );
+
+            animation: trackMove 1s linear infinite;
+        }
+
+        @keyframes trackMove {
+            to {
+                background-position: -37px 0;
+            }
+        }
+
+        .moving-train {
+            position: absolute;
+            z-index: 2;
+
+            left: -100px;
+            top: 0;
+
+            font-size: 38px;
+            line-height: 61px;
+
+            animation: trainTravel 12s linear infinite;
+        }
+
+        @keyframes trainTravel {
+            from {
+                left: -100px;
+            }
+
+            to {
+                left: calc(100% + 100px);
+            }
+        }
+
+        /* Feature cards */
+
+        .features {
+            padding: 80px 8% 100px;
+            text-align: center;
+        }
+
+        .section-label {
+            color: #67eaff;
+            font-weight: bold;
+            letter-spacing: 3px;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+
+        .features h2 {
+            font-size: clamp(30px, 4vw, 43px);
+            margin-bottom: 18px;
+        }
+
+        .section-description {
+            max-width: 600px;
+            margin: 0 auto 45px;
+
+            color: #bacbe0;
+            line-height: 1.8;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 25px;
+        }
+
+        .feature-card {
+            position: relative;
+            overflow: hidden;
+
+            padding: 32px 24px;
+
+            text-align: left;
+
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.13);
+
+            background: rgba(255, 255, 255, 0.055);
+            backdrop-filter: blur(10px);
+
+            transition: transform 0.35s, border-color 0.35s,
+                        box-shadow 0.35s;
+
+            animation: cardAppear 0.8s ease both;
+        }
+
+        .feature-card:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .feature-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(35px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-card::before {
+            content: "";
+            position: absolute;
+
+            top: 0;
+            left: -100%;
+
+            width: 100%;
+            height: 2px;
+
+            background: linear-gradient(
+                90deg,
+                transparent,
+                #00e5ff,
+                #c77dff,
+                transparent
+            );
+
+            transition: left 0.6s;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 217, 255, 0.5);
+
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+
+            width: 65px;
+            height: 65px;
+
+            margin-bottom: 23px;
+
+            border-radius: 18px;
+            background: rgba(0, 217, 255, 0.12);
+
+            font-size: 31px;
+
+            transition: transform 0.4s;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: rotate(-8deg) scale(1.12);
+        }
+
+        .feature-card h3 {
+            font-size: 21px;
+            margin-bottom: 13px;
+        }
+
+        .feature-card p {
+            color: #bacbe0;
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 22px;
+        }
+
+        .feature-card a {
+            color: #67eaff;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .feature-card a:hover {
+            color: white;
+        }
+
+        /* Bottom call to action */
+
+        .cta {
+            margin: 0 8% 80px;
+            padding: 45px 25px;
+
+            text-align: center;
+
+            border-radius: 25px;
+            border: 1px solid rgba(0, 217, 255, 0.25);
+
+            background: linear-gradient(
+                120deg,
+                rgba(0, 217, 255, 0.12),
+                rgba(157, 78, 221, 0.12)
+            );
+        }
+
+        .cta h2 {
+            font-size: clamp(25px, 4vw, 38px);
+            margin-bottom: 15px;
+        }
+
+        .cta p {
+            color: #bacbe0;
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        /* Footer */
+
+        footer {
+            padding: 25px 15px;
+
+            text-align: center;
+
+            background: rgba(0, 0, 0, 0.25);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+            color: #a8bad0;
+            font-size: 13px;
+        }
+
+        footer span {
+            color: #67eaff;
+        }
+
+        /* Responsive design */
+
+        @media (max-width: 900px) {
+            .hero {
+                text-align: center;
+                justify-content: center;
+                padding-top: 65px;
+            }
+
+            .hero-content {
+                flex-basis: 100%;
+            }
+
+            .hero p {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .buttons {
+                justify-content: center;
+            }
+
+            .train-scene {
+                flex-basis: 100%;
+            }
+
+            .feature-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .navbar {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 15px 4%;
+            }
+
+            .logo {
+                font-size: 17px;
+            }
+
+            .nav-links {
+                justify-content: center;
+            }
+
+            .nav-links a {
+                font-size: 12px;
+                padding: 9px;
+            }
+
+            .hero {
+                padding: 55px 6% 35px;
+            }
+
+            .hero h1 {
+                font-size: 39px;
+            }
+
+            .hero p {
+                font-size: 15px;
+            }
+
+            .orbit {
+                width: 275px;
+                height: 275px;
+            }
+
+            .train-card {
+                max-width: 300px;
+            }
+
+            .big-train {
+                font-size: 85px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features {
+                padding: 65px 6%;
+            }
+
+            .cta {
+                margin: 0 6% 55px;
+            }
+        }
+
+        /* Respect reduced-motion settings */
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-    <h1>🚆 Railway Management System</h1>
+    <div class="glow glow-one"></div>
+    <div class="glow glow-two"></div>
 
-    <div class="menu">
+    <!-- Navigation -->
+    <header class="navbar">
 
-        <a href="/book.html">🎟 Book Ticket</a>
-        <a href="/cancel.html">❌ Cancel Ticket</a>
-        <a href="/trains">🚉 View Trains</a>
-        <a href="/location">📍 Track Location</a>
-        <a href="/bookings">📋 View Bookings</a>
-    
-    </div>
+        <div class="logo">
+            <span class="logo-icon">🚆</span>
+            <span>Railway<span style="color:#67eaff;">Connect</span></span>
+        </div>
+
+        <nav class="nav-links">
+            <a href="/">🏠 Home</a>
+            <a href="/trains">🚉 Trains</a>
+            <a href="/book.html">🎟️ Book Ticket</a>
+            <a href="/location">📍 Track Location</a>
+            <a href="/bookings">📋 Bookings</a>
+            <a href="/cancel.html">❌ Cancel Ticket</a>
+        </nav>
+
+    </header>
+
+    <!-- Hero -->
+    <main>
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <div class="badge">
+                    ✨ YOUR JOURNEY STARTS HERE
+                </div>
+
+                <h1>
+                    Travel Smarter.<br>
+                    Travel <span class="gradient-text">Together.</span>
+                </h1>
+
+                <p>
+                    Welcome to your modern Railway Management System.
+                    Explore trains, book your tickets, track train locations,
+                    and manage your bookings through one simple platform.
+                </p>
+
+                <div class="buttons">
+
+                    <a href="/book.html" class="btn btn-primary">
+                        🎟️ Book Your Ticket →
+                    </a>
+
+                    <a href="/trains" class="btn btn-secondary">
+                        🚉 Explore Trains
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- Animated train card -->
+            <div class="train-scene">
+
+                <div class="orbit"></div>
+
+                <div class="train-card">
+
+                    <span class="big-train">🚄</span>
+
+                    <h3>Your Journey, Reimagined</h3>
+
+                    <p>
+                        Discover your next destination
+                        with a smoother booking experience.
+                    </p>
+
+                    <div class="status">
+                        <span class="status-dot"></span>
+                        RAILWAY JOURNEY PORTAL
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Moving railway track -->
+        <div class="track">
+            <div class="sleepers"></div>
+            <div class="moving-train">🚄</div>
+        </div>
+
+        <!-- Features -->
+        <section class="features">
+
+            <div class="section-label">
+                EXPLORE YOUR RAILWAY
+            </div>
+
+            <h2>Everything You Need, In One Place</h2>
+
+            <p class="section-description">
+                Discover useful railway services with a simple,
+                modern, and interactive interface.
+            </p>
+
+            <div class="feature-grid">
+
+                <article class="feature-card">
+
+                    <div class="feature-icon">🎟️</div>
+
+                    <h3>Book Tickets</h3>
+
+                    <p>
+                        Access the ticket booking form and manage
+                        your passenger booking details.
+                    </p>
+
+                    <a href="/book.html">Book a Ticket →</a>
+
+                </article>
+
+                <article class="feature-card">
+
+                    <div class="feature-icon">🚉</div>
+
+                    <h3>Explore Trains</h3>
+
+                    <p>
+                        Browse available trains and view their
+                        routes, schedules, and available seats.
+                    </p>
+
+                    <a href="/trains">View Trains →</a>
+
+                </article>
+
+                <article class="feature-card">
+
+                    <div class="feature-icon">📍</div>
+
+                    <h3>Track Locations</h3>
+
+                    <p>
+                        Visit the train location page to see the
+                        latest location records stored in the system.
+                    </p>
+
+                    <a href="/location">Track Location →</a>
+
+                </article>
+
+                <article class="feature-card">
+
+                    <div class="feature-icon">📋</div>
+
+                    <h3>Manage Bookings</h3>
+
+                    <p>
+                        View existing booking records and check
+                        their current booking status.
+                    </p>
+
+                    <a href="/bookings">View Bookings →</a>
+
+                </article>
+
+                <article class="feature-card">
+
+                    <div class="feature-icon">❌</div>
+
+                    <h3>Cancel Tickets</h3>
+
+                    <p>
+                        Open the cancellation page to access
+                        the ticket cancellation form.
+                    </p>
+
+                    <a href="/cancel.html">Cancel Ticket →</a>
+
+                </article>
+
+                <article class="feature-card">
+
+                    <div class="feature-icon">📊</div>
+
+                    <h3>System Dashboard</h3>
+
+                    <p>
+                        Visit the dashboard for an overview
+                        of trains, bookings, and cancellations.
+                    </p>
+
+                    <a href="/dashboard">Open Dashboard →</a>
+
+                </article>
+
+            </div>
+
+        </section>
+
+        <!-- Call to action -->
+        <section class="cta">
+
+            <h2>Ready for Your Next Journey? 🚆</h2>
+
+            <p>
+                Start exploring trains and discover your next trip.
+            </p>
+
+            <a href="/trains" class="btn btn-primary">
+                Explore Available Trains →
+            </a>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+
+        <p>
+            🚆 <span>RailwayConnect</span> |
+            Railway Management System
+        </p>
+
+        <p style="margin-top:10px;">
+            Making railway journeys simpler, one trip at a time.
+        </p>
+
+    </footer>
 
 </body>
 
