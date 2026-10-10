@@ -8,16 +8,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 PORT = 8000
-
 # ---------------- DATABASE ----------------
 def get_connection():
     return mysql.connector.connect(
         host="localhost",
-        user="root",
+        user=os.getenv("MYSQL_USER", "root"),
         password=os.getenv("MYSQL_PASSWORD"),
         database="railway_db"
     )
-
 
 # ---------------- SERVER ----------------
 class Handler(BaseHTTPRequestHandler):
@@ -548,7 +546,7 @@ class Handler(BaseHTTPRequestHandler):
 
         self.respond_html(page)
 
-    # ================= BOOKINGS =================
+       # ================= ANIMATED BOOKINGS =================
     def bookings(self):
         conn = get_connection()
         cur = conn.cursor()
@@ -570,46 +568,330 @@ class Handler(BaseHTTPRequestHandler):
 
         page = """
         <!DOCTYPE html>
-        <html>
+        <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Bookings</title>
+
+            <title>Bookings | Railway Management System</title>
+
             <style>
-                body { font-family: Arial; text-align: center; padding: 20px; }
-                table { border-collapse: collapse; margin: 20px auto; }
-                th, td { border: 1px solid #999; padding: 10px; }
-                th { background: #203a43; color: white; }
+                * {
+                    box-sizing: border-box;
+                }
+
+                body {
+                    margin: 0;
+                    min-height: 100vh;
+                    padding: 35px 20px;
+                    font-family: "Segoe UI", Arial, sans-serif;
+                    color: #f8fafc;
+                    text-align: center;
+                    background: linear-gradient(
+                        -45deg,
+                        #071525,
+                        #142a4b,
+                        #164e63,
+                        #1e1b4b
+                    );
+                    background-size: 400% 400%;
+                    animation: backgroundFlow 14s ease infinite;
+                }
+
+                @keyframes backgroundFlow {
+                    0% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
+                }
+
+                header {
+                    margin-bottom: 28px;
+                    animation: titleReveal .8s ease both;
+                }
+
+                @keyframes titleReveal {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-25px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                .icon {
+                    display: inline-block;
+                    font-size: 40px;
+                    animation: floatIcon 2s ease-in-out infinite;
+                    filter: drop-shadow(0 0 12px #38bdf8);
+                }
+
+                @keyframes floatIcon {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-7px); }
+                }
+
+                h1 {
+                    margin: 10px 0;
+                    font-size: clamp(28px, 4vw, 42px);
+                    text-shadow: 0 0 20px #38bdf855;
+                }
+
+                .subtitle {
+                    color: #bfdbfe;
+                    letter-spacing: 2px;
+                    font-size: 13px;
+                }
+
+                .summary {
+                    display: inline-block;
+                    margin: 15px auto 25px;
+                    padding: 13px 24px;
+                    color: #e0f2fe;
+                    border: 1px solid #7dd3fc55;
+                    border-radius: 15px;
+                    background: #ffffff0d;
+                    animation: fadeIn .8s .2s ease both;
+                }
+
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+
+                .table-card {
+                    width: min(1100px, 100%);
+                    margin: auto;
+                    overflow-x: auto;
+                    border: 1px solid #ffffff35;
+                    border-radius: 18px;
+                    background: white;
+                    box-shadow: 0 20px 60px #00000045;
+                    animation: cardReveal .9s .15s ease both;
+                }
+
+                @keyframes cardReveal {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px) scale(.98);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                }
+
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    color: #172b3a;
+                }
+
+                th {
+                    padding: 17px 14px;
+                    color: white;
+                    background: linear-gradient(120deg, #0f3547, #17627a);
+                    font-size: 13px;
+                    text-transform: uppercase;
+                    letter-spacing: .5px;
+                }
+
+                td {
+                    padding: 15px 14px;
+                    border-bottom: 1px solid #e2e8f0;
+                    white-space: nowrap;
+                }
+
+                tbody tr {
+                    animation: rowReveal .55s ease both;
+                    transition: background .25s, transform .25s;
+                }
+
+                tbody tr:nth-child(1) { animation-delay: .08s; }
+                tbody tr:nth-child(2) { animation-delay: .16s; }
+                tbody tr:nth-child(3) { animation-delay: .24s; }
+                tbody tr:nth-child(4) { animation-delay: .32s; }
+                tbody tr:nth-child(5) { animation-delay: .40s; }
+                tbody tr:nth-child(6) { animation-delay: .48s; }
+                tbody tr:nth-child(7) { animation-delay: .56s; }
+
+                @keyframes rowReveal {
+                    from {
+                        opacity: 0;
+                        transform: translateX(-18px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+
+                tbody tr:nth-child(even) {
+                    background: #f0f9ff;
+                }
+
+                tbody tr:hover {
+                    background: #dff7ff;
+                    transform: scale(1.01);
+                }
+
+                tbody tr:last-child td {
+                    border-bottom: none;
+                }
+
+                .booking-id {
+                    color: #0369a1;
+                    font-weight: 800;
+                }
+
+                .status {
+                    display: inline-block;
+                    padding: 6px 12px;
+                    border-radius: 20px;
+                    font-size: 12px;
+                    font-weight: 800;
+                    background: #dcfce7;
+                    color: #166534;
+                }
+
+                .status-cancelled {
+                    background: #fee2e2;
+                    color: #991b1b;
+                }
+
+                .navigation {
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                    gap: 13px;
+                    margin-top: 30px;
+                }
+
+                .navigation a {
+                    display: inline-block;
+                    padding: 12px 22px;
+                    color: #e0f2fe;
+                    text-decoration: none;
+                    font-weight: 700;
+                    border: 1px solid #7dd3fc55;
+                    border-radius: 30px;
+                    background: #ffffff12;
+                    transition: .3s ease;
+                }
+
+                .navigation a:hover {
+                    transform: translateY(-4px);
+                    background: #0891b2;
+                    box-shadow: 0 8px 25px #06b6d455;
+                }
+
+                footer {
+                    margin-top: 30px;
+                    color: #bfdbfe;
+                    font-size: 13px;
+                }
+
+                @media (max-width: 600px) {
+                    body { padding: 25px 10px; }
+                    th, td { padding: 12px 9px; font-size: 12px; }
+                }
+
+                @media (prefers-reduced-motion: reduce) {
+                    *, *::before, *::after {
+                        animation-duration: .01ms !important;
+                        animation-iteration-count: 1 !important;
+                        transition-duration: .01ms !important;
+                    }
+                }
             </style>
         </head>
+
         <body>
-            <h2>📋 Bookings</h2>
-            <table>
-                <tr>
-                    <th>Booking ID</th>
-                    <th>Passenger</th>
-                    <th>Train ID</th>
-                    <th>Seat</th>
-                    <th>Status</th>
-                </tr>
+            <header>
+                <div class="icon">📋</div>
+                <h1>Passenger Bookings</h1>
+                <p class="subtitle">YOUR TICKETS · YOUR JOURNEY</p>
+            </header>
+
+            <div class="summary">
+                🎫 Total Booking Records: <strong>""" + str(len(rows)) + """</strong>
+            </div>
+
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Passenger</th>
+                            <th>Train ID</th>
+                            <th>Seat</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
         """
 
         for row in rows:
             page += "<tr>"
-            for value in row:
-                page += f"<td>{html.escape(str(value))}</td>"
+
+            for index, value in enumerate(row):
+                if index == 0:
+                    page += (
+                        '<td class="booking-id">'
+                        f'{html.escape(str(value))}</td>'
+                    )
+
+                elif index == 4:
+                    status_value = str(value)
+                    status_class = (
+                        "status-cancelled"
+                        if status_value.upper() == "CANCELLED"
+                        else ""
+                    )
+
+                    page += (
+                        f'<td><span class="status {status_class}">'
+                        f'{html.escape(status_value)}</span></td>'
+                    )
+
+                else:
+                    page += (
+                        f"<td>{html.escape(str(value))}</td>"
+                    )
+
             page += "</tr>"
 
+        if not rows:
+            page += """
+                <tr>
+                    <td colspan="5">No booking records found.</td>
+                </tr>
+            """
+
         page += """
-            </table>
-            <p><a href="/">Home</a> | <a href="/dashboard">Dashboard</a></p>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav class="navigation">
+                <a href="/">🏠 Home</a>
+                <a href="/dashboard">📊 Dashboard</a>
+                <a href="/trains">🚆 Available Trains</a>
+                <a href="/book.html">🎟️ Book Ticket</a>
+                <a href="/cancel.html">❌ Cancel Ticket</a>
+            </nav>
+
+            <footer>
+                🚆 Every journey begins with a booking.
+            </footer>
         </body>
         </html>
         """
 
         self.respond_html(page)
 
-    # ================= TRACK LOCATION =================
+      # ================= ANIMATED TRACK LOCATION =================
     def location(self):
         conn = get_connection()
         cur = conn.cursor()
@@ -632,58 +914,310 @@ class Handler(BaseHTTPRequestHandler):
 
         page = """
         <!DOCTYPE html>
-        <html>
+        <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Track Train Location</title>
+
+            <title>Track Train Location | Railway Management System</title>
+
             <style>
+                * {
+                    box-sizing: border-box;
+                }
+
                 body {
-                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    min-height: 100vh;
+                    padding: 35px 20px;
+                    font-family: "Segoe UI", Arial, sans-serif;
+                    color: #f8fafc;
                     text-align: center;
-                    padding: 20px;
-                    background: #f4f7f9;
+                    background: linear-gradient(
+                        -45deg,
+                        #061525,
+                        #10364b,
+                        #14536a,
+                        #111b3d
+                    );
+                    background-size: 400% 400%;
+                    animation: backgroundFlow 14s ease infinite;
+                    overflow-x: hidden;
                 }
+
+                @keyframes backgroundFlow {
+                    0%   { background-position: 0% 50%; }
+                    50%  { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
+                }
+
+                .page-header {
+                    margin-bottom: 30px;
+                    animation: slideDown .8s ease both;
+                }
+
+                @keyframes slideDown {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-25px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                .location-icon {
+                    display: inline-block;
+                    font-size: 42px;
+                    animation: locationPulse 2s ease-in-out infinite;
+                    filter: drop-shadow(0 0 15px #f472b6);
+                }
+
+                @keyframes locationPulse {
+                    0%, 100% {
+                        transform: translateY(0) scale(1);
+                    }
+                    50% {
+                        transform: translateY(-7px) scale(1.08);
+                    }
+                }
+
+                h1 {
+                    margin: 10px 0;
+                    font-size: clamp(28px, 4vw, 42px);
+                    text-shadow: 0 0 20px #38bdf855;
+                }
+
+                .subtitle {
+                    color: #bae6fd;
+                    letter-spacing: 2px;
+                    font-size: 13px;
+                }
+
+                .track-line {
+                    max-width: 1000px;
+                    height: 4px;
+                    margin: 30px auto;
+                    overflow: hidden;
+                    border-radius: 20px;
+                    background: #ffffff22;
+                }
+
+                .track-line::after {
+                    content: "";
+                    display: block;
+                    width: 25%;
+                    height: 100%;
+                    background: linear-gradient(
+                        90deg,
+                        transparent,
+                        #67e8f9,
+                        #ffffff,
+                        transparent
+                    );
+                    animation: trackMove 2.5s linear infinite;
+                }
+
+                @keyframes trackMove {
+                    from { transform: translateX(-110%); }
+                    to { transform: translateX(410%); }
+                }
+
+                .table-card {
+                    width: min(1000px, 100%);
+                    margin: auto;
+                    overflow-x: auto;
+                    border: 1px solid #ffffff35;
+                    border-radius: 18px;
+                    background: #ffffff;
+                    box-shadow: 0 20px 60px #00000045;
+                    animation: cardReveal .9s .15s ease both;
+                }
+
+                @keyframes cardReveal {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px) scale(.98);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                }
+
                 table {
+                    width: 100%;
                     border-collapse: collapse;
-                    margin: 20px auto;
-                    background: white;
+                    color: #172b3a;
                 }
-                th, td {
-                    border: 1px solid #999;
-                    padding: 12px;
-                }
+
                 th {
-                    background: #203a43;
+                    padding: 17px 14px;
                     color: white;
+                    background: linear-gradient(120deg, #0f3547, #17627a);
+                    font-size: 14px;
+                    text-transform: uppercase;
+                    letter-spacing: .5px;
+                }
+
+                td {
+                    padding: 16px 14px;
+                    border-bottom: 1px solid #e2e8f0;
+                    white-space: nowrap;
+                }
+
+                tbody tr {
+                    animation: rowReveal .6s ease both;
+                    transition: background .25s, transform .25s;
+                }
+
+                tbody tr:nth-child(1) { animation-delay: .1s; }
+                tbody tr:nth-child(2) { animation-delay: .2s; }
+                tbody tr:nth-child(3) { animation-delay: .3s; }
+                tbody tr:nth-child(4) { animation-delay: .4s; }
+                tbody tr:nth-child(5) { animation-delay: .5s; }
+
+                @keyframes rowReveal {
+                    from {
+                        opacity: 0;
+                        transform: translateX(-20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+
+                tbody tr:nth-child(even) {
+                    background: #f0f9ff;
+                }
+
+                tbody tr:hover {
+                    background: #dff7ff;
+                    transform: scale(1.01);
+                }
+
+                tbody tr:last-child td {
+                    border-bottom: none;
+                }
+
+                .station {
+                    color: #047857;
+                    font-weight: 800;
+                }
+
+                .navigation {
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                    gap: 13px;
+                    margin-top: 30px;
+                }
+
+                .navigation a {
+                    display: inline-block;
+                    padding: 12px 22px;
+                    color: #e0f2fe;
+                    text-decoration: none;
+                    font-weight: 700;
+                    border: 1px solid #7dd3fc55;
+                    border-radius: 30px;
+                    background: #ffffff12;
+                    transition: .3s ease;
+                }
+
+                .navigation a:hover {
+                    transform: translateY(-4px);
+                    background: #0891b2;
+                    box-shadow: 0 8px 25px #06b6d455;
+                }
+
+                .footer {
+                    margin-top: 30px;
+                    color: #bae6fd;
+                    font-size: 13px;
+                }
+
+                @media (max-width: 600px) {
+                    body {
+                        padding: 25px 10px;
+                    }
+
+                    th, td {
+                        padding: 12px 9px;
+                        font-size: 12px;
+                    }
+                }
+
+                @media (prefers-reduced-motion: reduce) {
+                    *, *::before, *::after {
+                        animation-duration: .01ms !important;
+                        animation-iteration-count: 1 !important;
+                        transition-duration: .01ms !important;
+                    }
                 }
             </style>
         </head>
+
         <body>
-            <h2>📍 Track Train Location</h2>
-            <table>
-                <tr>
-                    <th>Train ID</th>
-                    <th>Train Name</th>
-                    <th>Current Station</th>
-                    <th>Last Updated</th>
-                </tr>
+            <header class="page-header">
+                <div class="location-icon">📍</div>
+                <h1>Track Train Location</h1>
+                <p class="subtitle">
+                    REAL-TIME JOURNEY INFORMATION
+                </p>
+            </header>
+
+            <div class="track-line"></div>
+
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Train ID</th>
+                            <th>Train Name</th>
+                            <th>Current Station</th>
+                            <th>Last Updated</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
         """
 
         for row in rows:
             page += "<tr>"
-            for value in row:
-                page += f"<td>{html.escape(str(value))}</td>"
+            for index, value in enumerate(row):
+                css_class = ' class="station"' if index == 2 else ""
+                page += (
+                    f"<td{css_class}>"
+                    f"{html.escape(str(value if value is not None else 'N/A'))}"
+                    "</td>"
+                )
             page += "</tr>"
 
         if not rows:
             page += """
-                <tr><td colspan="4">No train location records found.</td></tr>
+                <tr>
+                    <td colspan="4">No train location records found.</td>
+                </tr>
             """
 
         page += """
-            </table>
-            <p><a href="/">Home</a> | <a href="/trains">Trains</a></p>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav class="navigation">
+                <a href="/">🏠 Home</a>
+                <a href="/trains">🚆 Available Trains</a>
+                <a href="/dashboard">📊 Dashboard</a>
+                <a href="/book.html">🎟️ Book Ticket</a>
+            </nav>
+
+            <footer class="footer">
+                🚆 Follow your journey. Travel smarter.
+            </footer>
         </body>
         </html>
         """

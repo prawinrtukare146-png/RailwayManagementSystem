@@ -7,7 +7,7 @@ load_dotenv()
 def get_connection():
     connection = mysql.connector.connect(
         host="localhost",
-        user="root",
+        user=os.getenv("MYSQL_USER", "root"),
         password=os.getenv("MYSQL_PASSWORD"),
         database="railway_db"
     )
