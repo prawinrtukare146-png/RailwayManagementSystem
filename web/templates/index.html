@@ -814,8 +814,12 @@
             }
 
             .nav-links a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 44px;
                 font-size: 12px;
-                padding: 9px;
+                padding: 10px 8px;
             }
 
             .hero {
@@ -823,7 +827,9 @@
             }
 
             .hero h1 {
-                font-size: 39px;
+                font-size: clamp(30px, 8.5vw, 36px);
+                line-height: 1.15;
+                letter-spacing: -0.8px;
             }
 
             .hero p {
